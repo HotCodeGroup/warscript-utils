@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package models;
+
+service Auth {
+    rpc GetUserByID (UserID) returns (InfoUser);
+    rpc GetSessionInfo (SessionToken) returns (SessionPayload);
+}
+
+message UserID {
+    int64 ID = 1;
+}
+
+message InfoUser {
+    int64 ID = 1;
+    string username = 2;
+    string photoUUID = 3;
+    bool active = 4; 
+}
+
+message SessionToken {
+    string token = 1;
+}
+
+message SessionPayload {
+    int64 ID = 1;
+}
