@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -48,11 +48,11 @@ func NewAPIError(err error) *APIError {
 // ErrorResponseWriter объект для записи ошибок в лог и коннект
 type ErrorResponseWriter struct {
 	w      http.ResponseWriter
-	logger *log.Entry
+	logger *logrus.Entry
 }
 
 // NewErrorResponseWriter создаёт объект для логгирования и записи ошибок
-func NewErrorResponseWriter(w http.ResponseWriter, logger *log.Entry) *ErrorResponseWriter {
+func NewErrorResponseWriter(w http.ResponseWriter, logger *logrus.Entry) *ErrorResponseWriter {
 	return &ErrorResponseWriter{
 		w:      w,
 		logger: logger,
@@ -77,9 +77,9 @@ func (e *ErrorResponseWriter) WriteValidationError(err *ValidationError) {
 	WriteApplicationJSON(e.w, http.StatusBadRequest, err)
 }
 
-func GetLogger(r *http.Request, funcName string) *log.Entry {
+func GetLogger(r *http.Request, logger *logrus.Logger, funcName string) *logrus.Entry {
 	token := TokenInfo(r)
-	return log.WithFields(log.Fields{
+	return logger.WithFields(logrus.Fields{
 		"token":  token,
 		"method": funcName,
 	})
