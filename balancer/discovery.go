@@ -1,7 +1,6 @@
 package balancer
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -12,7 +11,7 @@ import (
 )
 
 func OnlineServiceDiscovery(consulCli *consulapi.Client, resolver *NameResolver,
-	servers []string, period time.Duration) {
+	service string, servers []string, period time.Duration) {
 	currAddrs := make(map[string]struct{}, len(servers))
 	for _, addr := range servers {
 		currAddrs[addr] = struct{}{}
@@ -20,9 +19,9 @@ func OnlineServiceDiscovery(consulCli *consulapi.Client, resolver *NameResolver,
 
 	ticker := time.Tick(period)
 	for _ = range ticker {
-		health, _, err := consulCli.Health().Service("session-api", "", false, nil)
+		health, _, err := consulCli.Health().Service(service, "", false, nil)
 		if err != nil {
-			log.Fatalf("cant get alive services")
+			log.Printf("cant get alive services: %s", err)
 		}
 
 		newAddrs := make(map[string]struct{}, len(health))
@@ -41,9 +40,9 @@ func OnlineServiceDiscovery(consulCli *consulapi.Client, resolver *NameResolver,
 					Addr: addr,
 				})
 				delete(currAddrs, addr)
-				fmt.Println("remove", addr)
 			}
 		}
+
 		// проверяем что добавилось
 		for addr := range newAddrs {
 			if _, exist := currAddrs[addr]; !exist {
@@ -52,9 +51,9 @@ func OnlineServiceDiscovery(consulCli *consulapi.Client, resolver *NameResolver,
 					Addr: addr,
 				})
 				currAddrs[addr] = struct{}{}
-				fmt.Println("add", addr)
 			}
 		}
+
 		if len(updates) > 0 {
 			resolver.W.Inject(updates)
 		}
