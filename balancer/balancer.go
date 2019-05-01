@@ -89,6 +89,19 @@ func NewNameResolver(consulCli *consulapi.Client, service string) (*NameResolver
 	return nameResolver, servers, nil
 }
 
+func (r *NameResolver) LoadServers(servers []string) {
+	if len(servers) > 1 {
+		updates := []*naming.Update{}
+		for i := 1; i < len(servers); i++ {
+			updates = append(updates, &naming.Update{
+				Op:   naming.Add,
+				Addr: servers[i],
+			})
+		}
+		r.W.Inject(updates)
+	}
+}
+
 func (r *NameResolver) Resolve(target string) (naming.Watcher, error) {
 	r.W = &Watcher{
 		Update:   make(chan *naming.Update, 1),
