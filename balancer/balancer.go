@@ -2,8 +2,12 @@ package balancer
 
 import (
 	"fmt"
+	"strconv"
 
 	"google.golang.org/grpc/naming"
+
+	consulapi "github.com/hashicorp/consul/api"
+	"github.com/pkg/errors"
 )
 
 // load balancer
@@ -49,6 +53,40 @@ func (w *Watcher) Inject(updates []*naming.Update) {
 type NameResolver struct {
 	W    *Watcher
 	Addr string
+}
+
+func NewNameResolver(consulCli *consulapi.Client, service string) (*NameResolver, []string, error) {
+	health, _, err := consulCli.Health().Service(service, "", false, nil)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "can not get service health")
+	}
+
+	servers := []string{}
+	for _, item := range health {
+		address := item.Service.Address + ":" + strconv.Itoa(item.Service.Port)
+		servers = append(servers, address)
+	}
+
+	if len(servers) == 0 {
+		return nil, nil, errors.New("no available auth services")
+	}
+
+	nameResolver := &NameResolver{
+		Addr: servers[0],
+	}
+
+	if len(servers) > 1 {
+		var updates []*naming.Update
+		for i := 1; i < len(servers); i++ {
+			updates = append(updates, &naming.Update{
+				Op:   naming.Add,
+				Addr: servers[i],
+			})
+		}
+		nameResolver.W.Inject(updates)
+	}
+
+	return nameResolver, servers, nil
 }
 
 func (r *NameResolver) Resolve(target string) (naming.Watcher, error) {
