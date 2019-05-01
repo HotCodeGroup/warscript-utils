@@ -11,59 +11,59 @@ import (
 
 type Watcher struct {
 	// the channel to receives name resolution updates
-	update chan *naming.Update
+	Update chan *naming.Update
 	// the side channel to get to know how many updates in a batch
-	side chan int
+	Side chan int
 	// the channel to notifiy update injector that the update reading is done
-	readDone chan int
+	ReadDone chan int
 }
 
 func (w *Watcher) Next() (updates []*naming.Update, err error) {
-	n := <-w.side
+	n := <-w.Side
 	if n == 0 {
 		return nil, fmt.Errorf("w.side is closed")
 	}
 	for i := 0; i < n; i++ {
-		u := <-w.update
+		u := <-w.Update
 		if u != nil {
 			updates = append(updates, u)
 		}
 	}
-	w.readDone <- 0
+	w.ReadDone <- 0
 	return
 }
 
 func (w *Watcher) Close() {
-	close(w.side)
+	close(w.Side)
 }
 
 // Inject naming resolution updates to the Watcher.
 func (w *Watcher) inject(updates []*naming.Update) {
-	w.side <- len(updates)
+	w.Side <- len(updates)
 	for _, u := range updates {
-		w.update <- u
+		w.Update <- u
 	}
-	<-w.readDone
+	<-w.ReadDone
 }
 
 type NameResolver struct {
-	w    *Watcher
-	addr string
+	W    *Watcher
+	Addr string
 }
 
 func (r *NameResolver) Resolve(target string) (naming.Watcher, error) {
-	r.w = &Watcher{
-		update:   make(chan *naming.Update, 1),
-		side:     make(chan int, 1),
-		readDone: make(chan int),
+	r.W = &Watcher{
+		Update:   make(chan *naming.Update, 1),
+		Side:     make(chan int, 1),
+		ReadDone: make(chan int),
 	}
-	r.w.side <- 1
-	r.w.update <- &naming.Update{
+	r.W.Side <- 1
+	r.W.Update <- &naming.Update{
 		Op:   naming.Add,
-		Addr: r.addr,
+		Addr: r.Addr,
 	}
 	go func() {
-		<-r.w.readDone
+		<-r.W.ReadDone
 	}()
-	return r.w, nil
+	return r.W, nil
 }
