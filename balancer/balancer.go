@@ -9,7 +9,7 @@ import (
 // load balancer
 // Copyright 2016 gRPC authors https://github.com/grpc/grpc-go/blob/master/balancer_test.go
 
-type testWatcher struct {
+type Watcher struct {
 	// the channel to receives name resolution updates
 	update chan *naming.Update
 	// the side channel to get to know how many updates in a batch
@@ -18,7 +18,7 @@ type testWatcher struct {
 	readDone chan int
 }
 
-func (w *testWatcher) Next() (updates []*naming.Update, err error) {
+func (w *Watcher) Next() (updates []*naming.Update, err error) {
 	n := <-w.side
 	if n == 0 {
 		return nil, fmt.Errorf("w.side is closed")
@@ -33,12 +33,12 @@ func (w *testWatcher) Next() (updates []*naming.Update, err error) {
 	return
 }
 
-func (w *testWatcher) Close() {
+func (w *Watcher) Close() {
 	close(w.side)
 }
 
-// Inject naming resolution updates to the testWatcher.
-func (w *testWatcher) inject(updates []*naming.Update) {
+// Inject naming resolution updates to the Watcher.
+func (w *Watcher) inject(updates []*naming.Update) {
 	w.side <- len(updates)
 	for _, u := range updates {
 		w.update <- u
@@ -46,13 +46,13 @@ func (w *testWatcher) inject(updates []*naming.Update) {
 	<-w.readDone
 }
 
-type testNameResolver struct {
-	w    *testWatcher
+type NameResolver struct {
+	w    *Watcher
 	addr string
 }
 
-func (r *testNameResolver) Resolve(target string) (naming.Watcher, error) {
-	r.w = &testWatcher{
+func (r *NameResolver) Resolve(target string) (naming.Watcher, error) {
+	r.w = &Watcher{
 		update:   make(chan *naming.Update, 1),
 		side:     make(chan int, 1),
 		readDone: make(chan int),
