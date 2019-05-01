@@ -38,7 +38,7 @@ func (w *Watcher) Close() {
 }
 
 // Inject naming resolution updates to the Watcher.
-func (w *Watcher) inject(updates []*naming.Update) {
+func (w *Watcher) Inject(updates []*naming.Update) {
 	w.Side <- len(updates)
 	for _, u := range updates {
 		w.Update <- u
