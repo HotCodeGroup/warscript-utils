@@ -75,17 +75,6 @@ func NewNameResolver(consulCli *consulapi.Client, service string) (*NameResolver
 		Addr: servers[0],
 	}
 
-	if len(servers) > 1 {
-		updates := []*naming.Update{}
-		for i := 1; i < len(servers); i++ {
-			updates = append(updates, &naming.Update{
-				Op:   naming.Add,
-				Addr: servers[i],
-			})
-		}
-		nameResolver.W.Inject(updates)
-	}
-
 	return nameResolver, servers, nil
 }
 
