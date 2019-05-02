@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package models;
 
-service Auth {
+service Games {
     rpc GetGameBySlug (GameSlug) returns (InfoGame);
 }
 
