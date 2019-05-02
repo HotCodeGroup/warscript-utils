@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package models;
+
+service Auth {
+    rpc GetGameBySlug (GameSlug) returns (InfoGame);
+}
+
+message GameSlug {
+    string slug = 1;
+}
+
+message InfoGame {
+    int64 ID = 1;
+    string slug = 2;
+    string title = 3;
+    string description = 4;
+    string rules = 5;
+    string codeExample = 6;
+    string botCode = 7;
+    string logoUUID = 8;
+    string backgroundUUID = 9;
+}
