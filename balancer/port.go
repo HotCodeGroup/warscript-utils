@@ -51,7 +51,7 @@ func GetPorts(boundsKey, service string, consulCli *consulapi.Client) (int, int,
 
 	httpPort := -1
 	if _, ok := bounds["http"]; ok {
-		httpPort, err = findFree(consulCli, service, bounds["http"])
+		httpPort, err = findFree(consulCli, service+"-http", bounds["http"])
 		if err != nil {
 			return -1, -1, errors.New("no available http ports")
 		}
@@ -59,7 +59,7 @@ func GetPorts(boundsKey, service string, consulCli *consulapi.Client) (int, int,
 
 	grpcPort := -1
 	if _, ok := bounds["grpc"]; ok {
-		grpcPort, err = findFree(consulCli, service, bounds["grpc"])
+		grpcPort, err = findFree(consulCli, service+"-grpc", bounds["grpc"])
 		if err != nil {
 			return -1, -1, errors.New("no available grpc ports")
 		}
