@@ -5,6 +5,7 @@ package models;
 service Auth {
     rpc GetUserByID (UserID) returns (InfoUser);
     rpc GetSessionInfo (SessionToken) returns (SessionPayload);
+    rpc GetUsersByIDs (UserIDs) returns (InfoUsers);
 }
 
 message UserID {
@@ -24,4 +25,12 @@ message SessionToken {
 
 message SessionPayload {
     int64 ID = 1;
+}
+
+message UserIDs {
+    repeated UserID IDs = 1;
+}
+
+message InfoUsers {
+    repeated InfoUser users = 1;
 }
