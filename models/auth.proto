@@ -25,6 +25,7 @@ message SessionToken {
 
 message SessionPayload {
     int64 ID = 1;
+    string Username = 2;
 }
 
 message UserIDs {
