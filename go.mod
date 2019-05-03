@@ -12,6 +12,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.1
+	github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94
 	golang.org/x/net v0.0.0-20190424112056-4829fb13d2c6
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
 	google.golang.org/grpc v1.20.1
