@@ -1,15 +1,21 @@
 syntax = "proto3";
 
+// protoc --go_out=plugins=grpc:. *.proto
 package models;
 
 service Auth {
     rpc GetUserByID (UserID) returns (InfoUser);
+    rpc GetUserByUsername (Username) returns (InfoUser);
     rpc GetSessionInfo (SessionToken) returns (SessionPayload);
     rpc GetUsersByIDs (UserIDs) returns (InfoUsers);
 }
 
 message UserID {
     int64 ID = 1;
+}
+
+message Username {
+    string username = 1;
 }
 
 message InfoUser {
