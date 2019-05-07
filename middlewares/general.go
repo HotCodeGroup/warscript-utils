@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/HotCodeGroup/warscript-utils/metrics"
+
 	"github.com/HotCodeGroup/warscript-utils/models"
 	"github.com/HotCodeGroup/warscript-utils/utils"
 	"github.com/pkg/errors"
@@ -18,6 +20,8 @@ const (
 	// реквеста хранится структура юзера после валидации
 	SessionInfoKey utils.ContextKey = 1
 )
+
+var hits = metrics.NewHits()
 
 // WithAuthentication проверка токена перед исполнением запроса
 //nolint: interfacer
@@ -66,9 +70,13 @@ func AccessLogMiddleware(next http.Handler, log *logrus.Logger) http.Handler {
 		ctx := context.WithValue(r.Context(), utils.RequestUUIDKey, token.String()[:8])
 
 		start := time.Now()
-		next.ServeHTTP(w, r.WithContext(ctx))
+		sw := statusWriter{ResponseWriter: w}
+
+		next.ServeHTTP(&sw, r.WithContext(ctx))
+		hits.WithLabelValues(sw.status, r.URL.String()).Inc()
 		log.WithFields(logrus.Fields{
 			"token":     token.String()[:8],
+			"status":    sw.status,
 			"method":    r.Method,
 			"work_time": time.Since(start).Seconds(),
 		}).Info(r.URL.Path)
