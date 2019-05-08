@@ -66,11 +66,20 @@ func RecoverMiddleware(next http.Handler, log *logrus.Logger) http.Handler {
 // AccessLogMiddleware логирование всех запросов
 func AccessLogMiddleware(next http.Handler, log *logrus.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := utils.GetLogger(r, log, "AccessLogMiddleware")
+
 		token := uuid.NewV4()
 		ctx := context.WithValue(r.Context(), utils.RequestUUIDKey, token.String()[:8])
 
 		start := time.Now()
-		sw := statusWriter{ResponseWriter: w}
+		uw, ok := w.(responseWriter)
+		if !ok {
+			logger.Error("response does not implement http.Hijacker")
+			utils.NewErrorResponseWriter(w, logger).
+				WriteError(http.StatusInternalServerError, utils.ErrInternal)
+		}
+
+		sw := statusWriter{responseWriter: uw}
 
 		next.ServeHTTP(&sw, r.WithContext(ctx))
 		hits.WithLabelValues(sw.status, r.URL.String()).Inc()

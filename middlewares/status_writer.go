@@ -1,20 +1,27 @@
 package middlewares
 
 import (
+	"bufio"
+	"net"
 	"net/http"
 	"strconv"
 )
 
+type responseWriter interface {
+	http.ResponseWriter
+	http.Hijacker
+}
+
 // чтобы иметь доступ к коду ответа
 type statusWriter struct {
-	http.ResponseWriter
+	responseWriter
 	status string
 	length int
 }
 
 func (w *statusWriter) WriteHeader(status int) {
 	w.status = strconv.Itoa(status)
-	w.ResponseWriter.WriteHeader(status)
+	w.responseWriter.WriteHeader(status)
 }
 
 func (w *statusWriter) Write(b []byte) (int, error) {
@@ -22,7 +29,11 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 		w.status = "200"
 	}
 
-	n, err := w.ResponseWriter.Write(b)
+	n, err := w.responseWriter.Write(b)
 	w.length += n
 	return n, err
+}
+
+func (w *statusWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	return w.responseWriter.Hijack()
 }
