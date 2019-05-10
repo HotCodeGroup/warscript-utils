@@ -1,6 +1,6 @@
 package testutils
 
 type Failer interface {
-	SetNextFail()
+	SetNextFail(err error)
 	NextFail()
 }
