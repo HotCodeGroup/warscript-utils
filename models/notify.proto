@@ -3,7 +3,7 @@ syntax = "proto3";
 package models;
 
 service Notify {
-    rpc GetUsersByIDs (Message) returns (Empty);
+    rpc SendNotify (Message) returns (Empty);
 }
 
 message Empty {
