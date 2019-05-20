@@ -19,7 +19,7 @@ func OnlineServiceDiscovery(consulCli *consulapi.Client, resolver *NameResolver,
 	}
 
 	ticker := time.Tick(period)
-	for _ = range ticker {
+	for range ticker {
 		health, _, err := consulCli.Health().Service(service, "", false, nil)
 		if err != nil {
 			log.Printf("cant get alive services: %s", err)

@@ -12,6 +12,7 @@ const (
 	amqpPattern = "amqp://%s:%s@%s:%s/"
 )
 
+// Connect подключение к очереди RabbitMQ
 func Connect(dbUser, dbPass, dbHost, dbPort string) (*amqp.Connection, error) {
 	var err error
 	_, err = strconv.ParseInt(dbPort, 10, 16)
