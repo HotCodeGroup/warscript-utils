@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Connect подключение к key-value хранилищу redis
 func Connect(storageUser, storagePass, storageHost string) (*redis.Client, error) {
 	var err error
 	redisCli := redis.NewClient(&redis.Options{

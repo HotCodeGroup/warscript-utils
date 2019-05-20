@@ -1,12 +1,14 @@
 package logging
 
 import (
+	"io"
+
 	"github.com/jcftang/logentriesrus"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"io"
 )
 
+// NewLogger создание новго объекта логгера для нужной функции
 func NewLogger(out io.Writer, token string) (*logrus.Logger, error) {
 	logger := logrus.New()
 	logger.SetFormatter(&logrus.JSONFormatter{})

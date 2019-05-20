@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Case кейс проверки для table testing
 type Case struct {
 	Payload      []byte
 	ExpectedCode int
@@ -23,6 +24,7 @@ type Case struct {
 	Context      context.Context
 }
 
+// MakeRequest отправить запрос к функции в виде запроса от клиента
 func MakeRequest(ctx context.Context, handler http.Handler, method, endpoint string, cookies []*http.Cookie,
 	body io.Reader) *httptest.ResponseRecorder {
 
@@ -40,6 +42,7 @@ func MakeRequest(ctx context.Context, handler http.Handler, method, endpoint str
 	return resp
 }
 
+// RunAPITest запуск одного теста с обработкой результатов
 func RunAPITest(t *testing.T, i int, c *Case) {
 	r := mux.NewRouter()
 	r.HandleFunc(c.Pattern, c.Function).Methods(c.Method)
@@ -58,6 +61,7 @@ func RunAPITest(t *testing.T, i int, c *Case) {
 	}
 }
 
+// RunTableAPITests запуск набора тестов
 func RunTableAPITests(t *testing.T, cases []*Case) {
 	for i, c := range cases {
 		RunAPITest(t, i, c)

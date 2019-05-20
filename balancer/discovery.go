@@ -10,6 +10,7 @@ import (
 	consulapi "github.com/hashicorp/consul/api"
 )
 
+// OnlineServiceDiscovery поддержание списка активнх gRPC сервисов
 func OnlineServiceDiscovery(consulCli *consulapi.Client, resolver *NameResolver,
 	service string, servers []string, period time.Duration) {
 	currAddrs := make(map[string]struct{}, len(servers))

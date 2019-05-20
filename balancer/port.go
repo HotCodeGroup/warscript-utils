@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Bound отрезовк доступных портов
 type Bound struct {
 	From int `json:"from"`
 	To   int `json:"to"`
@@ -37,6 +38,7 @@ func findFree(consulCli *consulapi.Client, service string, b Bound) (int, error)
 	return emptyPort, nil
 }
 
+// GetPorts получение портов из конфигов консула
 func GetPorts(boundsKey, service string, consulCli *consulapi.Client) (int, int, error) {
 	kv, _, err := consulCli.KV().Get(boundsKey, nil)
 	if err != nil || kv == nil {

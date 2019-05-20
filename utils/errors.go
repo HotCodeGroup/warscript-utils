@@ -77,6 +77,7 @@ func (e *ErrorResponseWriter) WriteValidationError(err *ValidationError) {
 	WriteApplicationJSON(e.w, http.StatusBadRequest, err)
 }
 
+// GetLogger получение логгера для нужной функции
 func GetLogger(r *http.Request, logger *logrus.Logger, funcName string) *logrus.Entry {
 	token := TokenInfo(r)
 	return logger.WithFields(logrus.Fields{

@@ -9,6 +9,7 @@ import (
 	consulapi "github.com/hashicorp/consul/api"
 )
 
+// ConnectClient подключение к gRPC сервису с балансировщиком
 func ConnectClient(consulCli *consulapi.Client, service string) (*grpc.ClientConn, error) {
 	nameResolver, servers, err := NewNameResolver(consulCli, service)
 	if err != nil {
