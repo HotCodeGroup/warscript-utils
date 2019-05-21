@@ -8,6 +8,7 @@ service Auth {
     rpc GetUserByUsername (Username) returns (InfoUser);
     rpc GetSessionInfo (SessionToken) returns (SessionPayload);
     rpc GetUsersByIDs (UserIDs) returns (InfoUsers);
+    rpc GetUserBySecret (VkSecret) returns (InfoUser);
 }
 
 message UserID {
@@ -16,6 +17,10 @@ message UserID {
 
 message Username {
     string username = 1;
+}
+
+message VkSecret {
+    string vkSecret = 1;
 }
 
 message InfoUser {
