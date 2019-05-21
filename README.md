@@ -1,6 +1,6 @@
 # Warscript Utils
 
-[![rcard](https://goreportcard.com/badge/github.com/HotCodeGroup/warscript-utils)](https://goreportcard.com/report/github.com/HotCodeGroup/warscript-utils)
+[![rcard](https://goreportcard.com/badge/github.com/HotCodeGroup/warscript-utils?service=github)](https://goreportcard.com/report/github.com/HotCodeGroup/warscript-utils)
 
 🧰 Some utils&amp;tools for Warscript
 
