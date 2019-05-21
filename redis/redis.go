@@ -1,17 +1,23 @@
 package redis
 
 import (
+	"strconv"
+
 	"github.com/go-redis/redis"
 	"github.com/pkg/errors"
 )
 
 // Connect подключение к key-value хранилищу redis
-func Connect(storageUser, storagePass, storageHost string) (*redis.Client, error) {
-	var err error
+func Connect(storageUser, storagePass, storageHost, database string) (*redis.Client, error) {
+	databaseID, err := strconv.Atoi(database)
+	if err != nil {
+		return nil, errors.Wrap(err, "database must be number")
+	}
+
 	redisCli := redis.NewClient(&redis.Options{
 		Addr:     storageHost,
 		Password: storagePass,
-		DB:       0,
+		DB:       databaseID,
 	})
 	_, err = redisCli.Ping().Result()
 	if err != nil {
