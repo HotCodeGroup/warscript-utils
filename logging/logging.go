@@ -15,12 +15,13 @@ func NewLogger(out io.Writer, token string) (*logrus.Logger, error) {
 	logger.SetOutput(out)
 
 	// собираем логи в хранилище
-	le, err := logentriesrus.NewLogentriesrusHook(token)
-	if err != nil {
-		return nil, errors.Wrap(err, "can not create logrus logger")
+	if token != "" {
+		le, err := logentriesrus.NewLogentriesrusHook(token)
+		if err != nil {
+			return nil, errors.Wrap(err, "can not create logrus logger")
+		}
+		logger.AddHook(le)
 	}
-
-	logger.AddHook(le)
 
 	return logger, nil
 }
