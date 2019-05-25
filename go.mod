@@ -7,6 +7,7 @@ require (
 	github.com/bsphere/le_go v0.0.0-20170215134836-7a984a84b549 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/golang/protobuf v1.3.1
+	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.1
 	github.com/hashicorp/consul/api v1.0.1
 	github.com/jackc/pgx v3.3.0+incompatible

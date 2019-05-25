@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/HotCodeGroup/warscript-utils/metrics"
+	"github.com/google/uuid"
 
 	"github.com/HotCodeGroup/warscript-utils/models"
 	"github.com/HotCodeGroup/warscript-utils/utils"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 )
@@ -68,7 +68,7 @@ func AccessLogMiddleware(next http.Handler, log *logrus.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger := utils.GetLogger(r, log, "AccessLogMiddleware")
 
-		token := uuid.NewV4()
+		token := uuid.New()
 		ctx := context.WithValue(r.Context(), utils.RequestUUIDKey, token.String()[:8])
 
 		start := time.Now()
